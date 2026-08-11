@@ -382,24 +382,24 @@ with st.expander("👉 블록식 안벽 상세 구조계산서 자동화 시스�
 st.sidebar.header("📁 해석 모드 및 수위 조건")
 calc_mode = st.sidebar.radio("해석 모드 선택", ["평상시 (Normal)", "지진시 (Earthquake)"], index=0)
 
-hwl_n = st.sidebar.number_input("평상시 H.W.L (m)", value=1.964, format="%.3f", step=0.001)
+hwl_n = st.sidebar.number_input("평상시 H.W.L (m)", value=0.632, format="%.3f", step=0.001)
 llw = st.sidebar.number_input("L.L.W (m)", value=0.000, format="%.3f", step=0.001)
 
 default_rwl = llw + (hwl_n - llw) / 3.0
 rwl_n = st.sidebar.number_input("평상 잔류수위 (m)", value=default_rwl, format="%.3f", step=0.001)
-h_water = st.sidebar.number_input("전면수심 H (m)", value=12.000, format="%.3f", step=0.100)
+h_water = st.sidebar.number_input("전면수심 H (m)", value=11.000, format="%.3f", step=0.100)
 
-c_top = st.sidebar.number_input("마루높이 (부지고, DL.m)", value=4.00, format="%.2f", step=0.01)
+c_top = st.sidebar.number_input("마루높이 (부지고, DL.m)", value=2.50, format="%.2f", step=0.01)
 
 st.sidebar.divider()
 st.sidebar.header("🧱 블록 단별 규격 (무제한 입력)")
 if "tier_data" not in st.session_state:
     st.session_state.tier_data = pd.DataFrame({
         "구분": ["상치", "1단", "2단", "3단", "4단", "5단"],
-        "높이 H(m)": [2.5, 2.0, 2.0, 2.0, 2.0, 2.0],
-        "폭 B(m)": [3.3, 5.5, 5.5, 6.5, 7.5, 9.5],
-        "상단폭(m)": [3.3, 5.5, 5.5, 6.5, 7.5, 9.5],
-        "전면돌출(m)": [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        "높이 H(m)": [2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+        "폭 B(m)": [4.5, 5.0, 6.5, 8.0, 9.5, 11.5],
+        "상단폭(m)": [4.5, 5.0, 6.5, 8.0, 9.5, 10.5],
+        "전면돌출(m)": [0.5, 0.0, 0.0, 0.0, 0.0, 1.0],
         "전면수직고(m)": [0.0, 0.0, 0.0, 0.0, 0.0, 0.5],
         "경사비(1:N)": [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         "후단수직고(m)": [0.0, 0.0, 0.0, 0.0, 0.0, 0.5]
@@ -424,8 +424,8 @@ edited_tiers = st.sidebar.data_editor(
 st.sidebar.divider()
 st.sidebar.header("🌍 지반 및 단위중량 조건")
 phi = st.sidebar.number_input("내부마찰각 Φ (°)", value=40.0)
-delta = st.sidebar.number_input("벽면마찰각 δ (°)", value=15.0)
-kh = st.sidebar.number_input("설계수평지진계수(kh)", value=0.079, format="%.3f")
+delta = st.sidebar.number_input("벽면마찰각 δ (°)", value=0.0)
+kh = st.sidebar.number_input("설계수평지진계수(kh)", value=0.120, format="%.3f")
 # =====================================================================
 # ★ 추가할 코드: 함수 바깥에서 ka_n (평상시 주동토압계수) 미리 정의하기
 # =====================================================================
@@ -438,18 +438,18 @@ g_c_eq = st.sidebar.number_input("무근Con (관성력용)", value=22.6)
 g_s_wet = st.sidebar.number_input("사석 (수상)", value=18.0)
 g_s_sub = st.sidebar.number_input("사석 (수중)", value=10.0)
 g_s_sat = st.sidebar.number_input("사석 (포화, 지진시)", value=20.0)
-g_w = st.sidebar.number_input("해수 단위중량 (kN/m³)", value=10.1, format="%.1f")
+g_w = st.sidebar.number_input("해수 단위중량 (kN/m³)", value=10.3, format="%.1f")
 
 st.sidebar.divider()
 st.sidebar.subheader("설계 하중 및 지지력 조건")
 qa_n = st.sidebar.number_input("사석 허용지지력 (평상시, kPa)", value=500.0, step=10.0)
 qa_s = st.sidebar.number_input("사석 허용지지력 (지진시, kPa)", value=600.0, step=10.0)
 
-q_n = st.sidebar.number_input("평상시 상재하중 (kPa)", value=20.0)
-q_s = st.sidebar.number_input("지진시 상재하중 (kPa)", value=10.0)
-mooring_t = st.sidebar.number_input("계선곡주 견인력 (kN)", value=350.0)
-mooring_interval = st.sidebar.number_input("계선주 설치간격 (m)", value=15.0, format="%.2f")
-mooring_h = st.sidebar.number_input("계선곡주 높이(견인력 작용점, m)", value=0.40, format="%.2f")
+q_n = st.sidebar.number_input("평상시 상재하중 (kPa)", value=60.0)
+q_s = st.sidebar.number_input("지진시 상재하중 (kPa)", value=30.0)
+mooring_t = st.sidebar.number_input("계선곡주 견인력 (kN)", value=500.0)
+mooring_interval = st.sidebar.number_input("계선주 설치간격 (m)", value=12.0, format="%.2f")
+mooring_h = st.sidebar.number_input("계선곡주 높이(견인력 작용점, m)", value=0.31, format="%.2f")
 
 rep = ReportBuilder()
 
@@ -603,16 +603,16 @@ ep_nodes_nq = get_ep_nodes(edited_tiers, rwl_n, c_top, g_s_wet, g_s_sub, False, 
 ep_nodes_s0 = get_ep_nodes(edited_tiers, rwl_n, c_top, g_s_wet, g_s_sub, True, 0.0, kh, phi, delta)
 ep_nodes_sq = get_ep_nodes(edited_tiers, rwl_n, c_top, g_s_wet, g_s_sub, True, q_s, kh, phi, delta)
 
-# -------------------------------------------------------------
-
+# =====================================================================
+# ★ 5. 정밀 연산 엔진 (상치부 및 블록 변형, 전면돌출 시 팔걸이/모멘트 자동 산정 수정을 반영한 코딩)
+# =====================================================================
 sum_W_n, sum_W_x_n = 0.0, 0.0
 sum_mass_s, sum_mass_y_s = 0.0, 0.0
-prev_b = 0.0
+prev_x_rear = 0.0  # 전 단의 후단 X좌표 (1단블록 해측 전면 = 0.0 기준)
 current_elev = c_top
 
 sum_v_sq_n, sum_mr_sq_n = 0.0, 0.0
 sum_v_sq_s, sum_mr_sq_s = 0.0, 0.0
-prev_b_sq = 0.0
 
 tier_details = []
 html_table_rows = ""
@@ -623,167 +623,447 @@ prev_cg_y_rel = 0.0
 rubble_labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l']
 rubble_lbl_idx = 0
 
-try:
-    top_b = float(edited_tiers.iloc[0]["폭 B(m)"]) if not edited_tiers.empty else 0.0
-except:
-    top_b = 0.0
-
+# 유효 블록 수집
+valid_tiers = []
 for idx, row in edited_tiers.iterrows():
     name_val = row.get("구분", None)
     if pd.isna(name_val) or str(name_val).strip().lower() in ["none", "nan", ""]:
         continue
     try:
-        h = float(row["높이 H(m)"])
-        b = float(row["폭 B(m)"])
-        if pd.isna(h) or pd.isna(b):
+        h_val = float(row["높이 H(m)"])
+        b_val = float(row["폭 B(m)"])
+        if pd.isna(h_val) or pd.isna(b_val):
             continue
     except Exception:
         continue
+    valid_tiers.append(row)
 
-    name = str(name_val)
+total_tier_count = len(valid_tiers)
+
+for idx, row in enumerate(valid_tiers):
+    name = str(row["구분"])
+    h = float(row["높이 H(m)"])
+    b = float(row["폭 B(m)"])
+
+    top_b = float(row.get("상단폭(m)", b)) if pd.notna(row.get("상단폭(m)")) else b
+    out_h = float(row.get("전면돌출(m)", 0.0)) if pd.notna(row.get("전면돌출(m)")) else 0.0
+    toe_v = float(row.get("전면수직고(m)", 0.0)) if pd.notna(row.get("전면수직고(m)")) else 0.0
+    rear_v = float(row.get("후단수직고(m)", 0.0)) if pd.notna(row.get("후단수직고(m)")) else 0.0
+
     top_elev = current_elev
     bot_elev = current_elev - h
     z_depth = c_top - bot_elev
-    is_last = (idx == len(edited_tiers) - 1)
+    is_first = (idx == 0)
+    is_last = (idx == total_tier_count - 1)
+
+    # 1단블록 해측 전면(X=0.0)을 기준점으로 한 블록 전단/후단 X좌표 산정
+    x_front = -out_h
+    x_rear = b - out_h
 
     tier_components = []
     inertia_components = []
 
     if idx > 0:
-        tier_components.append({"sub": "상치자중" if idx == 1 else "상부자중", "basis_n": "-", "vn": sum_W_n,
-                                "xn": sum_W_x_n / sum_W_n if sum_W_n > 0 else 0, "mvn": sum_W_x_n})
-        inertia_components.append({"sub": "from", "basis": "이전 단 누적", "mass": prev_mass, "arm": prev_cg_y_rel + h,
-                                   "mh": prev_mass * (prev_cg_y_rel + h)})
+        # 현재 단 전면(x_front = -out_h) 기준 상부자중 팔걸이 동적 보정
+        upper_xn = (sum_W_x_n / sum_W_n - x_front) if sum_W_n > 0 else 0.0
+        upper_mvn = sum_W_n * upper_xn
 
-    h_above = max(0, top_elev - max(bot_elev, rwl_n))
-    h_below = max(0, min(top_elev, rwl_n) - bot_elev)
+        # 팔걸이 산정근거 문자열 (자중식 / 팔걸이 보정식)
+        arm_basis_str = f"({sum_W_x_n / sum_W_n:.2f} + {out_h:.2f})" if out_h > 0 else f"{sum_W_x_n / sum_W_n:.2f}"
 
-    if h_above > 0:
-        v_n = b * h_above * g_c_wet
-        m_s = b * h_above * g_c_eq
-        x = b / 2.0
-        mv_n = v_n * x
-        y_cm = top_elev - h_above / 2.0
-        sum_W_n += v_n;
-        sum_W_x_n += mv_n
-        sum_mass_s += m_s;
-        sum_mass_y_s += m_s * y_cm
-        tier_components.append(
-            {"sub": "Con수상", "basis_n": f"{b:.2f} × {h_above:.2f} × 1 × {g_c_wet:.1f}", "vn": v_n, "xn": x,
-             "mvn": mv_n})
-        inertia_components.append({"sub": "Con수상", "basis": f"{b:.2f} × {h_above:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
-                                   "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+        tier_components.append({
+            "sub": "상치자중" if idx == 1 else "상부자중",
+            "basis_n": f"W={sum_W_n:.2f} / Xn={arm_basis_str}",
+            "vn": sum_W_n,
+            "xn": upper_xn,
+            "mvn": upper_mvn
+        })
+        inertia_components.append({
+            "sub": "from",
+            "basis": "이전 단 누적",
+            "mass": prev_mass,
+            "arm": prev_cg_y_rel + h,
+            "mh": prev_mass * (prev_cg_y_rel + h)
+        })
 
-    if h_below > 0:
-        v_n = b * h_below * g_c_sub
-        m_s = b * h_below * g_c_eq
-        x = b / 2.0
-        mv_n = v_n * x
-        y_cm = bot_elev + h_below / 2.0
-        sum_W_n += v_n;
-        sum_W_x_n += mv_n
-        sum_mass_s += m_s;
-        sum_mass_y_s += m_s * y_cm
-        tier_components.append(
-            {"sub": "Con수중", "basis_n": f"{b:.2f} × {h_below:.2f} × 1 × {g_c_sub:.1f}", "vn": v_n, "xn": x,
-             "mvn": mv_n})
-        inertia_components.append({"sub": "Con수중", "basis": f"{b:.2f} × {h_below:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
-                                   "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+    h_above = max(0.0, top_elev - max(bot_elev, rwl_n))
+    h_below = max(0.0, min(top_elev, rwl_n) - bot_elev)
 
+    # -----------------------------------------------------------------
+    # ★ 1) 제체 콘크리트 자중 및 팔길이 연산 (로컬/글로벌 좌표 분리 적용)
+    # -----------------------------------------------------------------
+
+    # 1. 표 출력 및 단 내부 계산용 로컬 팔길이 (해당 단 전면 x_front 기준)
     if is_last:
-        v_n_rect = 1.0 * 0.5 * 1.0 * (-g_c_sub)
-        m_s_rect = 1.0 * 0.5 * 1.0 * (-g_c_eq)
-        x_rect = 1.0 / 2.0
-        mv_n_rect = v_n_rect * x_rect
-        y_cm_rect = top_elev - 0.25
-        sum_W_n += v_n_rect;
-        sum_W_x_n += mv_n_rect
-        sum_mass_s += m_s_rect;
-        sum_mass_y_s += m_s_rect * y_cm_rect
-        tier_components.append(
-            {"sub": "Con공제", "basis_n": f"1.00 × 0.50 × 1 × -{g_c_sub:.2f}", "vn": v_n_rect, "xn": x_rect,
-             "mvn": mv_n_rect})
-        inertia_components.append(
-            {"sub": "Con공제", "basis": f"1.00 × 0.50 × 1 × -{g_c_eq:.2f}", "mass": m_s_rect, "arm": y_cm_rect - bot_elev,
-             "mh": m_s_rect * (y_cm_rect - bot_elev)})
+        x_local = b / 2.0
+        rect_arm_str = f"({b:.2f}/2)"
+    else:
+        # 일반 단면의 경우, 만약 로컬 기준이 필요하다면 b/2.0 혹은 단 전면 기준 적용
+        x_local = b / 2.0
+        rect_arm_str = f"({b:.2f}/2)"
 
-        v_n_tri = 1.0 * 1.0 * 0.5 * (-g_c_sub)
-        m_s_tri = 1.0 * 1.0 * 0.5 * (-g_c_eq)
-        x_tri = 1.0 / 3.0
-        mv_n_tri = v_n_tri * x_tri
-        y_cm_tri = top_elev - 0.5 - (1.0 / 3.0)
-        sum_W_n += v_n_tri;
-        sum_W_x_n += mv_n_tri
-        sum_mass_s += m_s_tri;
-        sum_mass_y_s += m_s_tri * y_cm_tri
-        tier_components.append(
-            {"sub": "Con공제", "basis_n": f"1.00 × 1.00 × 1/2 × -{g_c_sub:.2f}", "vn": v_n_tri, "xn": x_tri,
-             "mvn": mv_n_tri})
-        inertia_components.append(
-            {"sub": "Con공제", "basis": f"1.00 × 1.00 × 1/2 × -{g_c_eq:.2f}", "mass": m_s_tri, "arm": y_cm_tri - bot_elev,
-             "mh": m_s_tri * (y_cm_tri - bot_elev)})
+    # 2. 전체 구조물 안정성(전도 등)을 위한 글로벌 팔길이 (1단 해측 전면 X=0.0 기준)
+    x_global = x_front + x_local
 
+    if is_first:
+        # 상치부: 상단폭(top_b)과 하단폭(b)이 다른 단면 분할 처리
+        w_rect = min(top_b, b)
+        w_tri = abs(b - top_b)
+
+        # 상치부 로컬 및 글로벌 X좌표 산정
+        x_local_rect = w_rect / 2.0
+        x_global_rect = x_front + x_local_rect
+
+        x_local_tri = w_rect + w_tri / 3.0 if b > top_b else w_tri * (2.0 / 3.0)
+        x_global_tri = x_front + x_local_tri
+
+        rect_arm_str = f"({w_rect:.2f}/2)" if idx > 0 else f"({x_front:.2f} + {w_rect:.2f}/2)"
+
+        if h_above > 0:
+            v_n = w_rect * h_above * g_c_wet
+            m_s = w_rect * h_above * g_c_eq
+            mv_local = v_n * x_local_rect  # 표 출력 및 단 합계용 (로컬)
+            mvn_global = v_n * x_global_rect  # 전체 안정성 누적용 (글로벌)
+
+            y_cm = top_elev - h_above / 2.0
+            sum_W_n += v_n;
+            sum_W_x_n += mvn_global
+            sum_mass_s += m_s;
+            sum_mass_y_s += m_s * y_cm
+
+            tier_components.append(
+                {"sub": "Con수상", "basis_n": f"W:{w_rect:.2f}×{h_above:.2f}×{g_c_wet:.1f} | Arm:{rect_arm_str}",
+                 "vn": v_n, "xn": x_local_rect, "mvn": mv_local})
+            inertia_components.append(
+                {"sub": "Con수상", "basis": f"{w_rect:.2f} × {h_above:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
+                 "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+        if h_below > 0:
+            v_n = w_rect * h_below * g_c_sub
+            m_s = w_rect * h_below * g_c_eq
+            mv_local = v_n * x_local_rect
+            mvn_global = v_n * x_global_rect
+
+            y_cm = bot_elev + h_below / 2.0
+            sum_W_n += v_n;
+            sum_W_x_n += mvn_global
+            sum_mass_s += m_s;
+            sum_mass_y_s += m_s * y_cm
+
+            tier_components.append(
+                {"sub": "Con수중", "basis_n": f"W:{w_rect:.2f}×{h_below:.2f}×{g_c_sub:.1f} | Arm:{rect_arm_str}",
+                 "vn": v_n, "xn": x_local_rect, "mvn": mv_local})
+            inertia_components.append(
+                {"sub": "Con수중", "basis": f"{w_rect:.2f} × {h_below:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
+                 "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+        # 삼각형 사면 부분
+        if w_tri > 0.001:
+            tri_arm_str = f"({w_rect:.2f} + {w_tri:.2f}/3)" if b > top_b else f"({w_tri:.2f}*2/3)"
+
+            if h_above > 0:
+                v_n = 0.5 * w_tri * h_above * g_c_wet
+                m_s = 0.5 * w_tri * h_above * g_c_eq
+                mv_local = v_n * x_local_tri
+                mvn_global = v_n * x_global_tri
+
+                y_cm = top_elev - h_above / 3.0
+                sum_W_n += v_n;
+                sum_W_x_n += mvn_global
+                sum_mass_s += m_s;
+                sum_mass_y_s += m_s * y_cm
+
+                tier_components.append({"sub": "Con수상(경사)",
+                                        "basis_n": f"W:0.5×{w_tri:.2f}×{h_above:.2f}×{g_c_wet:.1f} | Arm:{tri_arm_str}",
+                                        "vn": v_n, "xn": x_local_tri, "mvn": mv_local})
+                inertia_components.append(
+                    {"sub": "Con수상(경사)", "basis": f"{w_tri:.2f} × {h_above:.2f} × 0.5 × {g_c_eq:.1f}", "mass": m_s,
+                     "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+            if h_below > 0:
+                v_n = 0.5 * w_tri * h_below * g_c_sub
+                m_s = 0.5 * w_tri * h_below * g_c_eq
+                mv_local = v_n * x_local_tri
+                mvn_global = v_n * x_global_tri
+
+                y_cm = bot_elev + h_below / 3.0
+                sum_W_n += v_n;
+                sum_W_x_n += mvn_global
+                sum_mass_s += m_s;
+                sum_mass_y_s += m_s * y_cm
+
+                tier_components.append({"sub": "Con수중(경사)",
+                                        "basis_n": f"W:0.5×{w_tri:.2f}×{h_below:.2f}×{g_c_sub:.1f} | Arm:{tri_arm_str}",
+                                        "vn": v_n, "xn": x_local_tri, "mvn": mv_local})
+                inertia_components.append(
+                    {"sub": "Con수중(경사)", "basis": f"{w_tri:.2f} × {h_below:.2f} × 0.5 × {g_c_eq:.1f}", "mass": m_s,
+                     "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+    else:
+        # 일반 단면 (1단, 2단, 최하단 등)
+        if h_above > 0:
+            v_n = b * h_above * g_c_wet
+            m_s = b * h_above * g_c_eq
+            mv_local = v_n * x_local
+            mvn_global = v_n * x_global
+
+            y_cm = top_elev - h_above / 2.0
+            sum_W_n += v_n;
+            sum_W_x_n += mvn_global
+            sum_mass_s += m_s;
+            sum_mass_y_s += m_s * y_cm
+
+            tier_components.append(
+                {"sub": "Con수상", "basis_n": f"W:{b:.2f}×{h_above:.2f}×{g_c_wet:.1f} | Arm:{rect_arm_str}", "vn": v_n,
+                 "xn": x_local, "mvn": mv_local})
+            inertia_components.append(
+                {"sub": "Con수상", "basis": f"{b:.2f} × {h_above:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
+                 "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+        if h_below > 0:
+            v_n = b * h_below * g_c_sub
+            m_s = b * h_below * g_c_eq
+            mv_local = v_n * x_local
+            mvn_global = v_n * x_global
+
+            y_cm = bot_elev + h_below / 2.0
+            sum_W_n += v_n;
+            sum_W_x_n += mvn_global
+            sum_mass_s += m_s;
+            sum_mass_y_s += m_s * y_cm
+
+            tier_components.append(
+                {"sub": "Con수중", "basis_n": f"W:{b:.2f}×{h_below:.2f}×{g_c_sub:.1f} | Arm:{rect_arm_str}", "vn": v_n,
+                 "xn": x_local, "mvn": mv_local})
+            inertia_components.append(
+                {"sub": "Con수중", "basis": f"{b:.2f} × {h_below:.2f} × 1 × {g_c_eq:.1f}", "mass": m_s,
+                 "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+
+    # -----------------------------------------------------------------
+    # ★ 2) 최하단 발가락(Toe) Con 공제 연산 로직
+    # -----------------------------------------------------------------
+    if is_last and out_h > 0:
+        h_rect = 0.5  # 상단 수직 공제 고정 높이
+        h_cut = max(0.0, h - toe_v - h_rect)
+
+        if h_cut > 0:
+            # 1) Con공제(직사)
+            x_cut_local_rect = out_h / 2.0
+            x_cut_global_rect = x_cut_local_rect  # 전면 돌출부 기준 로컬/글로벌 조율
+            rect_arm_str = f"({out_h:.2f}/2)"
+
+            v_n_rect = out_h * h_rect * (-g_c_sub)
+            m_s_rect = out_h * h_rect * (-g_c_eq)
+            mv_local_rect = -abs(v_n_rect * x_cut_local_rect)
+            mvn_global_rect = -abs(v_n_rect * (x_front + x_cut_local_rect))
+
+            y_cm_rect = bot_elev + h_rect / 2.0
+            sum_W_n += v_n_rect;
+            sum_W_x_n += mvn_global_rect
+            sum_mass_s += m_s_rect;
+            sum_mass_y_s += m_s_rect * y_cm_rect
+
+            tier_components.append({
+                "sub": "Con공제(직사)",
+                "basis_n": f"W:{out_h:.2f}×{h_rect:.2f}×{-g_c_sub:.2f}",
+                "arm_basis": rect_arm_str,
+                "vn": v_n_rect, "xn": x_cut_local_rect, "mvn": mv_local_rect
+            })
+            inertia_components.append(
+                {"sub": "Con공제(직사)", "basis": f"{out_h:.2f} × {h_rect:.2f} × -{g_c_eq:.2f}", "mass": m_s_rect,
+                 "arm": y_cm_rect - bot_elev, "mh": m_s_rect * (y_cm_rect - bot_elev)})
+
+            # 2) Con공제(경사)
+            x_cut_local_tri = out_h * (1.0 / 3.0)
+            tri_arm_str = f"({out_h:.2f}/3)"
+
+            v_n_tri = 0.5 * out_h * h_cut * (-g_c_sub)
+            m_s_tri = 0.5 * out_h * h_cut * (-g_c_eq)
+            mv_local_tri = -abs(v_n_tri * x_cut_local_tri)
+            mvn_global_tri = -abs(v_n_tri * (x_front + x_cut_local_tri))
+
+            y_cm_tri = bot_elev + h_rect + h_cut / 3.0
+            sum_W_n += v_n_tri;
+            sum_W_x_n += mvn_global_tri
+            sum_mass_s += m_s_tri;
+            sum_mass_y_s += m_s_tri * y_cm_tri
+
+            tier_components.append({
+                "sub": "Con공제(경사)",
+                "basis_n": f"W:0.5×{out_h:.2f}×{h_cut:.2f}×{-g_c_sub:.2f}",
+                "arm_basis": tri_arm_str,
+                "vn": v_n_tri, "xn": x_cut_local_tri, "mvn": mv_local_tri
+            })
+            inertia_components.append(
+                {"sub": "Con공제(경사)", "basis": f"{out_h:.2f} × {h_cut:.2f} × 0.5 × -{g_c_eq:.2f}", "mass": m_s_tri,
+                 "arm": y_cm_tri - bot_elev, "mh": m_s_tri * (y_cm_tri - bot_elev)})
+
+    # (여기서부터 아래는 올려주신 '# ★ 2) 배면 사석 자중 및 팔걸이...' 코드가 이어집니다)
+
+    # -----------------------------------------------------------------
+    # ★ 2) 배면 사석 자중 및 팔걸이(x_rubble) - 잔류수위 기준 정밀 분할 및 기호 매핑
+    # -----------------------------------------------------------------
     if idx > 0:
-        db = max(0, b - prev_b - (1.0 if is_last else 0.0))
-        if db > 0:
-            s_above = max(0, c_top - max(top_elev, rwl_n))
-            s_below = max(0, min(c_top, rwl_n) - top_elev)
+        prev_row = valid_tiers[idx - 1]
+        prev_b_val = float(prev_row["폭 B(m)"])
+        prev_top_b_val = float(prev_row.get("상단폭(m)", prev_b_val)) if pd.notna(prev_row.get("상단폭(m)")) else prev_b_val
 
-            if s_above > 0 or s_below > 0:
-                x = prev_b + db / 2.0
-                lbl_above_str = ""
-                lbl_below_str = ""
+        # 상치부 바로 아래 1단(idx==1) 사석 'a' 구간 처리
+        if idx == 1:
+            # 상치 하단 배면 끝단 X좌표는 직전 단의 진짜 후면 좌표(prev_x_rear)를 그대로 사용
+            base_x = prev_x_rear
+            a_bot_w = 1.0  # 사석 a 하부 폭 (도면상 고정 1.0m)
 
-                if c_top > rwl_n > top_elev:
-                    lbl_above_str = rubble_labels[rubble_lbl_idx % len(rubble_labels)]
-                    lbl_below_str = rubble_labels[(rubble_lbl_idx + 1) % len(rubble_labels)]
-                    rubble_lbl_idx += 2
-                elif top_elev >= rwl_n:
-                    lbl_above_str = rubble_labels[rubble_lbl_idx % len(rubble_labels)]
-                    rubble_lbl_idx += 1
-                elif c_top <= rwl_n:
-                    lbl_below_str = rubble_labels[rubble_lbl_idx % len(rubble_labels)]
-                    rubble_lbl_idx += 1
+            slope_dx = max(0.0, prev_b_val - prev_top_b_val)
 
-                if s_above > 0:
-                    v_n = db * s_above * g_s_wet
-                    m_s = db * s_above * g_s_wet
-                    mv_n = v_n * x
-                    y_cm = c_top - s_above / 2.0
-                    sum_W_n += v_n;
-                    sum_W_x_n += mv_n
-                    sum_mass_s += m_s;
-                    sum_mass_y_s += m_s * y_cm
-                    tier_components.append(
-                        {"sub": f"사석수상({lbl_above_str})", "basis_n": f"{db:.2f} × {s_above:.2f} × 1 × {g_s_wet:.1f}",
-                         "vn": v_n, "xn": x, "mvn": mv_n})
-                    inertia_components.append(
-                        {"sub": f"사석수상({lbl_above_str})", "basis": f"{db:.2f} × {s_above:.2f} × 1 × {g_s_wet:.1f}",
-                         "mass": m_s, "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+            # 수상/수중 높이 정밀 분할 계산 (잔류수위 기준)
+            s_above = max(0.0, c_top - max(top_elev, rwl_n))
+            s_sub = max(0.0, min(c_top, rwl_n) - top_elev)
 
-                if s_below > 0:
-                    v_n = db * s_below * g_s_sub
-                    m_s = db * s_below * g_s_sat
-                    mv_n = v_n * x
-                    y_cm = top_elev + s_below / 2.0
-                    sum_W_n += v_n;
-                    sum_W_x_n += mv_n
-                    sum_mass_s += m_s;
-                    sum_mass_y_s += m_s * y_cm
-                    tier_components.append(
-                        {"sub": f"사석수중({lbl_below_str})", "basis_n": f"{db:.2f} × {s_below:.2f} × 1 × {g_s_sub:.1f}",
-                         "vn": v_n, "xn": x, "mvn": mv_n})
-                    inertia_components.append(
-                        {"sub": f"사석수중({lbl_below_str})", "basis": f"{db:.2f} × {s_below:.2f} × 1 × {g_s_sat:.1f}",
-                         "mass": m_s, "arm": y_cm - bot_elev, "mh": m_s * (y_cm - bot_elev)})
+            # --- [수상부 연산] ---
+            if s_above > 0.001:
+                if a_bot_w > 0.001:
+                    x_r_rect = base_x + a_bot_w / 2.0
+                    rect_arm_str = f"({base_x:.2f} + {a_bot_w:.2f}/2)"
+                    v_rect = a_bot_w * s_above * g_s_wet
+                    mv_rect = v_rect * x_r_rect
+                    sum_W_n += v_rect;
+                    sum_W_x_n += mv_rect
+                    tier_components.append({
+                        "sub": "사석수상(a_직사)",
+                        "basis_n": f"W:{a_bot_w:.2f}×{s_above:.2f}×{g_s_wet:.1f}",
+                        "arm_basis": rect_arm_str,
+                        "vn": v_rect, "xn": x_r_rect, "mvn": mv_rect
+                    })
 
+                if slope_dx > 0.001:
+                    x_r_tri = base_x - (slope_dx / 3.0)
+                    tri_arm_str = f"({base_x:.2f} - {slope_dx:.2f}/3)"
+                    v_tri = 0.5 * slope_dx * s_above * g_s_wet
+                    mv_tri = v_tri * x_r_tri
+                    sum_W_n += v_tri;
+                    sum_W_x_n += mv_tri
+                    tier_components.append({
+                        "sub": "사석수상(a_경사)",
+                        "basis_n": f"W:0.5×{slope_dx:.2f}×{s_above:.2f}×{g_s_wet:.1f}",
+                        "arm_basis": tri_arm_str,
+                        "vn": v_tri, "xn": x_r_tri, "mvn": mv_tri
+                    })
+
+            # --- [수중부 연산] (고수위 조건 대비) ---
+            if s_sub > 0.001:
+                if a_bot_w > 0.001:
+                    x_r_rect = base_x + a_bot_w / 2.0
+                    rect_arm_str = f"({base_x:.2f} + {a_bot_w:.2f}/2)"
+                    v_rect_sub = a_bot_w * s_sub * g_s_sub
+                    mv_rect_sub = v_rect_sub * x_r_rect
+                    sum_W_n += v_rect_sub;
+                    sum_W_x_n += mv_rect_sub
+                    tier_components.append({
+                        "sub": "사석수중(a_직사)",
+                        "basis_n": f"W:{a_bot_w:.2f}×{s_sub:.2f}×{g_s_sub:.1f}",
+                        "arm_basis": rect_arm_str,
+                        "vn": v_rect_sub, "xn": x_r_rect, "mvn": mv_rect_sub
+                    })
+
+                if slope_dx > 0.001:
+                    x_r_tri = base_x - (slope_dx / 3.0)
+                    tri_arm_str = f"({base_x:.2f} - {slope_dx:.2f}/3)"
+                    v_tri_sub = 0.5 * slope_dx * s_sub * g_s_sub
+                    mv_tri_sub = v_tri_sub * x_r_tri
+                    sum_W_n += v_tri_sub;
+                    sum_W_x_n += mv_tri_sub
+                    tier_components.append({
+                        "sub": "사석수중(a_경사)",
+                        "basis_n": f"W:0.5×{slope_dx:.2f}×{s_sub:.2f}×{g_s_sub:.1f}",
+                        "arm_basis": tri_arm_str,
+                        "vn": v_tri_sub, "xn": x_r_tri, "mvn": mv_tri_sub
+                    })
+
+        else:
+            # 2단 이하 일반적인 직사각형 배면 사석 연산
+            db = max(0.0, x_rear - prev_x_rear)
+            if db > 0.001:
+                x_rubble = prev_x_rear + db / 2.0
+                arm_str = f"({prev_x_rear:.2f} + {db:.2f}/2)"
+
+                # 수상/수중 높이 정밀 분할 계산 (잔류수위 기준)
+                s_above = max(0.0, c_top - max(top_elev, rwl_n))
+                s_sub = max(0.0, min(c_top, rwl_n) - top_elev)
+
+                # 단수(idx)별 모식도 기호 매핑
+                labels_map = {
+                    2: ('b', 'c'),
+                    3: ('d', 'e'),
+                    4: ('f', 'g'),
+                    5: ('h', 'i')
+                }
+                lbl_above, lbl_below = labels_map.get(idx, (f"수상_단{idx}", f"수중_단{idx}"))
+
+                # 1) 사석 수상부
+                if s_above > 0.001:
+                    v_above = db * s_above * g_s_wet
+                    mv_above = v_above * x_rubble
+                    sum_W_n += v_above;
+                    sum_W_x_n += mv_above
+                    tier_components.append({
+                        "sub": f"사석수상({lbl_above})",
+                        "basis_n": f"W:{db:.2f}×{s_above:.2f}×{g_s_wet:.1f}",
+                        "arm_basis": arm_str,
+                        "vn": v_above, "xn": x_rubble, "mvn": mv_above
+                    })
+
+                # 2) 사석 수중부 (잔류수위 이하)
+                if s_sub > 0.001:
+                    v_sub = db * s_sub * g_s_sub
+                    mv_sub = v_sub * x_rubble
+                    sum_W_n += v_sub;
+                    sum_W_x_n += mv_sub
+                    tier_components.append({
+                        "sub": f"사석수중({lbl_below})",
+                        "basis_n": f"W:{db:.2f}×{s_sub:.2f}×{g_s_sub:.1f}",
+                        "arm_basis": arm_str,
+                        "vn": v_sub, "xn": x_rubble, "mvn": mv_sub
+                    })
+
+    # 다음 단 배면사석 연산을 위해 현재 단의 후단 X좌표 저장
+    prev_x_rear = x_rear
+
+    # HTML 구조계산서 출력용 로직
     xn_total = sum_W_x_n / sum_W_n if sum_W_n > 0 else 0
     rowspan = len(tier_components) + 1
     html_table_rows += f"<tr><td rowspan='{rowspan}' style='border: 1px solid #ccc; background:#fff; vertical-align:middle; text-align:center;'><b>[{name}]</b><br>DL {top_elev:.2f} ~ {bot_elev:.2f}</td>"
+
     for i, comp in enumerate(tier_components):
         if i > 0: html_table_rows += "<tr>"
-        html_table_rows += f"<td style='border: 1px solid #ccc; padding:6px; text-align:center;'>{comp['sub']}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'><div style='font-size:11px; color:#7f8c8d; margin-bottom:3px;'>{comp['basis_n']}</div><b>{comp['vn']:.2f}</b></td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{comp['xn']:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right; font-weight:bold;'>{comp['mvn']:.2f}</td></tr>\n"
-    html_table_rows += f"<tr style='background:#fdf2e9; font-weight:bold;'><td style='border: 1px solid #ccc; padding:6px; text-align:center;'>합 계</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{sum_W_n:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{xn_total:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right; color:#e67e22;'>{sum_W_x_n:.2f}</td></tr>\n"
+
+        # ★ Con/합계 등에 남아있는 " | Arm:" 및 " / Xn=" 문구를 분리하여 팔길이 열로 자동 강제 이동
+        basis_str = str(comp.get('basis_n', ''))
+        arm_str = str(comp.get('arm_basis', ''))
+
+        if ' | Arm:' in basis_str:
+            parts = basis_str.split(' | Arm:')
+            basis_str = parts[0].strip()
+            if not arm_str: arm_str = parts[1].strip()
+        elif ' / Xn=' in basis_str:
+            parts = basis_str.split(' / Xn=')
+            basis_str = parts[0].strip()
+            if not arm_str: arm_str = parts[1].strip()
+
+        arm_cell_content = f"<div style='font-size:11px; color:#7f8c8d; margin-bottom:3px;'>{arm_str}</div><b>{comp['xn']:.2f}</b>" if arm_str else f"<b>{comp['xn']:.2f}</b>"
+
+        html_table_rows += f"<td style='border: 1px solid #ccc; padding:6px; text-align:center;'>{comp['sub']}</td>" \
+                           f"<td style='border: 1px solid #ccc; padding:6px; text-align:right;'><div style='font-size:11px; color:#7f8c8d; margin-bottom:3px;'>{basis_str}</div><b>{comp['vn']:.2f}</b></td>" \
+                           f"<td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{arm_cell_content}</td>" \
+                           f"<td style='border: 1px solid #ccc; padding:6px; text-align:right; font-weight:bold;'>{comp['mvn']:.2f}</td></tr>\n"
+
+    # ★ 현재 단(Tier) 내부 항목들만의 정확한 합계 계산
+    tier_v_sum = sum(comp['vn'] for comp in tier_components)
+    tier_mvn_sum = sum(comp['mvn'] for comp in tier_components)
+    tier_xn_avg = tier_mvn_sum / tier_v_sum if tier_v_sum != 0 else 0.0
+
+    # 기존의 누적값이 아닌, 위에서 구한 '단 내부 전용 합계'를 합계 행 HTML에 대입
+    html_table_rows += f"<tr style='background:#fdf2e9; font-weight:bold;'><td style='border: 1px solid #ccc; padding:6px; text-align:center;'>합 계</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{tier_v_sum:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{tier_xn_avg:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right; color:#e67e22;'>{tier_mvn_sum:.2f}</td></tr>\n"
 
     sum_m_s = sum(comp["mass"] for comp in inertia_components)
     sum_mh = sum(comp["mh"] for comp in inertia_components)
@@ -796,6 +1076,7 @@ for idx, row in edited_tiers.iterrows():
         html_table_rows_inertia += f"<td style='border: 1px solid #ccc; padding:6px; text-align:center;'>{comp['sub']}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'><div style='font-size:11px; color:#7f8c8d; margin-bottom:3px;'>{comp['basis']}</div><b>{comp['mass']:.2f}</b></td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{comp['arm']:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right; color:#1a73e8; font-weight:bold;'>{comp['mh']:.2f}</td></tr>\n"
     html_table_rows_inertia += f"<tr style='background:#e8f0fe; font-weight:bold;'><td style='border: 1px solid #ccc; padding:6px; text-align:center;'>계</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{sum_m_s:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right;'>{prev_cg_y_rel:.2f}</td><td style='border: 1px solid #ccc; padding:6px; text-align:right; color:#1a73e8;'>{sum_mh:.2f}</td></tr>\n"
 
+    # 수압, 토압, 관성력, 동수압 및 하중조합 연산
     hw = max(0, rwl_n - llw)
     h_tri_total = max(0, rwl_n - max(llw, bot_elev))
     h_rect_total = max(0, llw - bot_elev) if rwl_n > llw else 0
@@ -810,10 +1091,9 @@ for idx, row in edited_tiers.iterrows():
     pw_n = pw_tri + pw_rect
     mw_n = (pw_tri * arm_tri) + (pw_rect * arm_rect)
 
-    u_n = 0.0;
+    u_n = 0.0
     mu_n = 0.0
 
-    # ★ 수정됨: 단일 삼각형 공식이 아닌, 산출표와 100% 동일한 사전계산 노드를 활용하여 정밀 적분 수행
     ph0_n, mh0_n = integrate_ep(ep_nodes_n0, bot_elev)
     phq_n, mhq_n = integrate_ep(ep_nodes_nq, bot_elev)
     ph0_s, mh0_s = integrate_ep(ep_nodes_s0, bot_elev)
@@ -833,10 +1113,8 @@ for idx, row in edited_tiers.iterrows():
     hd_from_bot = y_val_dw - hd_from_top if y_val_dw > 0 else 0.0
     dw_m = dw_f * hd_from_bot
 
-    # ★ 상재하중(연직력 및 모멘트) 단별 산정
-    is_last_tier = (idx == len(edited_tiers) - 1)
-    eff_b = (b - 1.0) if is_last_tier else b
-    arm_sq = 1.0 + (eff_b / 2.0) if is_last_tier else (eff_b / 2.0)
+    eff_b = (b - out_h) if is_last else b
+    arm_sq = x_front + eff_b / 2.0
 
     curr_v_sq_n = q_n * eff_b
     curr_mr_sq_n = curr_v_sq_n * arm_sq
@@ -845,9 +1123,11 @@ for idx, row in edited_tiers.iterrows():
     curr_mr_sq_s = curr_v_sq_s * arm_sq
     v_sq_tier_s = curr_v_sq_s
 
-    # ★ 지진시 상재하중 관성력(제체 위 상재하중 질량 X kh)
     eq_f_sq = curr_v_sq_s * kh
     eq_m_sq = eq_f_sq * (c_top - bot_elev)
+
+    # 1. 현재 단(Tier) 내부 항목들의 순수 자중모멘트 합계 계산
+    tier_mvn_sum = sum(comp['mvn'] for comp in tier_components)
 
     tier_details.append({
         "name": name, "bot_el": bot_elev, "b": b, "z": z_depth, "hw": hw,
@@ -855,30 +1135,34 @@ for idx, row in edited_tiers.iterrows():
         "v_sq_n": curr_v_sq_n, "mr_sq_n": curr_mr_sq_n, "v_sq_s": curr_v_sq_s,
         "v_sq_tier_s": v_sq_tier_s, "mr_sq_s": curr_mr_sq_s, "tr_f": tr_f,
         "tr_m": tr_m, "dw_f": dw_f, "dw_m": dw_m, "sum_W_n": sum_W_n,
-        "sum_W_x_n": sum_W_x_n, "inertia_mass": sum_m_s, "inertia_arm": prev_cg_y_rel,
+        "sum_W_x_n": tier_mvn_sum,  # 👈 여기도 전역 누적합 대신 단별 자중모멘트(1017.36)가 들어가도록 수정
+        "inertia_mass": sum_m_s, "inertia_arm": prev_cg_y_rel,
         "ph0_n": ph0_n, "mh0_n": mh0_n, "phq_n": phq_n, "mhq_n": mhq_n,
 
         "eq_f": eq_f, "eq_m": eq_m, "eq_f_sq": eq_f_sq, "eq_m_sq": eq_m_sq,
 
-        "V_1_1": sum_W_n - u_n, "H_1_1": ph0_n + pw_n + tr_f, "Mr_1_1": sum_W_x_n + mu_n, "Mo_1_1": mh0_n + mw_n + tr_m,
-        "V_1_2": sum_W_n - u_n, "H_1_2": phq_n + pw_n + tr_f, "Mr_1_2": sum_W_x_n + mu_n, "Mo_1_2": mhq_n + mw_n + tr_m,
-        "V_1_3": sum_W_n + curr_v_sq_n - u_n, "H_1_3": ph0_n + pw_n + tr_f, "Mr_1_3": sum_W_x_n + curr_mr_sq_n + mu_n,
-        "Mo_1_3": mh0_n + mw_n + tr_m,
-        "V_1_4": sum_W_n + curr_v_sq_n - u_n, "H_1_4": phq_n + pw_n + tr_f, "Mr_1_4": sum_W_x_n + curr_mr_sq_n + mu_n,
-        "Mo_1_4": mhq_n + mw_n + tr_m,
+        # 👈 하중집계 표의 Mr 성분들에도 sum_W_x_n 대신 단별 자중모멘트(tier_mvn_sum)를 연결
+        "V_1_1": sum_W_n - u_n, "H_1_1": ph0_n + pw_n + tr_f, "Mr_1_1": tier_mvn_sum + mu_n,
+        "Mo_1_1": mh0_n + mw_n + tr_m,
+        "V_1_2": sum_W_n - u_n, "H_1_2": phq_n + pw_n + tr_f, "Mr_1_2": tier_mvn_sum + mu_n,
+        "Mo_1_2": mhq_n + mw_n + tr_m,
+        "V_1_3": sum_W_n + curr_v_sq_n - u_n, "H_1_3": ph0_n + pw_n + tr_f,
+        "Mr_1_3": tier_mvn_sum + curr_mr_sq_n + mu_n, "Mo_1_3": mh0_n + mw_n + tr_m,
+        "V_1_4": sum_W_n + curr_v_sq_n - u_n, "H_1_4": phq_n + pw_n + tr_f,
+        "Mr_1_4": tier_mvn_sum + curr_mr_sq_n + mu_n, "Mo_1_4": mhq_n + mw_n + tr_m,
 
-        "V_2_1": sum_W_n - u_n, "H_2_1": ph0_s + eq_f + pw_n + dw_f, "Mr_2_1": sum_W_x_n + mu_n,
+        "V_2_1": sum_W_n - u_n, "H_2_1": ph0_s + eq_f + pw_n + dw_f, "Mr_2_1": tier_mvn_sum + mu_n,
         "Mo_2_1": mh0_s + eq_m + mw_n + dw_m,
-        "V_2_2": sum_W_n - u_n, "H_2_2": phq_s + eq_f + pw_n + dw_f, "Mr_2_2": sum_W_x_n + mu_n,
+        "V_2_2": sum_W_n - u_n, "H_2_2": phq_s + eq_f + pw_n + dw_f, "Mr_2_2": tier_mvn_sum + mu_n,
         "Mo_2_2": mhq_s + eq_m + mw_n + dw_m,
         "V_2_3": sum_W_n + curr_v_sq_s - u_n, "H_2_3": ph0_s + eq_f + eq_f_sq + pw_n + dw_f,
-        "Mr_2_3": sum_W_x_n + curr_mr_sq_s + mu_n, "Mo_2_3": mh0_s + eq_m + eq_m_sq + mw_n + dw_m,
+        "Mr_2_3": tier_mvn_sum + curr_mr_sq_s + mu_n, "Mo_2_3": mh0_s + eq_m + eq_m_sq + mw_n + dw_m,
         "V_2_4": sum_W_n + curr_v_sq_s - u_n, "H_2_4": phq_s + eq_f + eq_f_sq + pw_n + dw_f,
-        "Mr_2_4": sum_W_x_n + curr_mr_sq_s + mu_n, "Mo_2_4": mhq_s + eq_m + eq_m_sq + mw_n + dw_m
+        "Mr_2_4": tier_mvn_sum + curr_mr_sq_s + mu_n, "Mo_2_4": mhq_s + eq_m + eq_m_sq + mw_n + dw_m
     })
 
     current_elev = bot_elev
-    prev_b = b
+
 
 # =====================================================================
 # ★ 누적 하중(from) 누락 오류가 완벽히 수정된 토압 산출표 생성 함수
@@ -1828,60 +2112,47 @@ def generate_water_pressure_html(tiers_df, hwl, llw, rwl, c_top, g_w=10.0):
     return html
 
 
-def generate_surcharge_html(tiers_df, q_val, c_top):
-    html = "<table style='width:100%; border-collapse: collapse; text-align:center; border: 2px solid #333; font-size:12px; margin-bottom: 25px;'>"
-    html += "<tr style='background-color:#d9d9d9;'>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>구 분</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>기준점</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>P(kN) 산식</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>연직력 P(kN)</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>모멘트 Mᵥ(kN·m) 산식</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>모멘트 Mᵥ(kN·m)</th>"
-    html += "<th style='border:1px solid #ccc; padding:8px;'>비고</th>"
-    html += "</tr>"
+# ==========================================
+# [수정된 메인 데이터 동기화 루프]
+# 하중집계표를 그리기 전에 이 코드가 반드시 실행되어야 합니다.
+# ==========================================
+current_elev = c_top  # 최상단 기준 고도 (예: c_top)
 
-    current_elev = c_top
-    for idx, row in tiers_df.iterrows():
-        h = float(row["높이 H(m)"])
-        b = float(row["폭 B(m)"])
-        bot_elev = current_elev - h
-        is_last = (idx == len(tiers_df) - 1)
+for idx, row in edited_tiers.iterrows():
+    h = float(row["높이 H(m)"])
+    b = float(row["폭 B(m)"])
+    bot_elev = current_elev - h
+    is_last = (idx == len(edited_tiers) - 1)
 
-        if is_last:
-            eff_b = b - 1.0
-            p_val = q_val * eff_b
-            arm = 1.0 + (eff_b / 2.0)
-            arm_str = f"1.0 + {eff_b:.2f} / 2"
-        else:
-            eff_b = b
-            p_val = q_val * eff_b
-            arm = eff_b / 2.0
-            arm_str = f"{eff_b:.2f} / 2"
+    # 1. 상재하중 표와 '100% 동일한 공식'으로 연직력과 모멘트 계산
+    if is_last:
+        eff_b = b - 1.0
+        p_val = q_s * eff_b
+        arm = 1.0 + (eff_b / 2.0)
+    else:
+        eff_b = b
+        p_val = q_s * eff_b
+        arm = eff_b / 2.0
 
-        mv_val = p_val * arm
+    mv_val = p_val * arm
 
-        sign_str = "+" if bot_elev >= 0 else "-"
-        level_str = f"DL({sign_str}){abs(bot_elev):.2f}"
+    # 2. 딕셔너리에 상재하중 단독 값 저장 (상재하중 표가 읽어가는 값)
+    tier_details[idx]['v_sq_n'] = p_val
+    tier_details[idx]['v_sq_s'] = p_val
+    tier_details[idx]['mr_sq_n'] = mv_val
+    tier_details[idx]['mr_sq_s'] = mv_val
 
-        html += "<tr>"
-        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold;'>{level_str}</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px;'>항외측 TOE</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px;'>{q_val:.2f} × {eff_b:.2f}</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold;'>{p_val:.2f}</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px;'>{p_val:.2f} × ({arm_str})</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold; color:#1a73e8;'>{mv_val:.2f}</td>"
-        html += f"<td style='border:1px solid #ccc; padding:6px;'></td>"
-        html += "</tr>"
+    # 3. 기존 자중 값에 위에서 구한 정확한 상재하중 값을 더해서 최종 집계값(V, Mr) 업데이트
+    w_n = tier_details[idx].get('sum_W_n', 0.0)
+    wx_n = tier_details[idx].get('sum_W_x_n', 0.0)
 
-        current_elev = bot_elev
+    tier_details[idx]['V_1_3'] = w_n + p_val
+    tier_details[idx]['V_1_4'] = w_n + p_val
+    tier_details[idx]['Mr_1_3'] = wx_n + mv_val
+    tier_details[idx]['Mr_1_4'] = wx_n + mv_val
 
-    html += "</table>"
-    return html
+    current_elev = bot_elev
 
-
-# =====================================================================
-# ★ 검토단면에 DL 검토높이 표기가 추가된 CASE별 하중집계 테이블 생성 함수
-# =====================================================================
 
 def generate_case_summary_table(case_title, case_key, tiers_details):
     html = f"<div style='margin-top: 15px;'><b>■ {case_title}</b></div>"
@@ -1922,14 +2193,16 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
         elif case_key == "1_3":
             v_parts = [f"자중 {t['sum_W_n']:.2f}"]
             if t['v_sq_n'] > 0: v_parts.append(f"상재연직 {t['v_sq_n']:.2f}")
-            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
+            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(
+                v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
             h_parts = [f"토압(상재無) {t['ph0_n']:.2f}"] if t['ph0_n'] > 0 else []
             if t['pw_n'] > 0: h_parts.append(f"잔류수압 {t['pw_n']:.2f}")
             if t['tr_f'] > 0: h_parts.append(f"견인력 {t['tr_f']:.2f}")
             h_str = f"<b>{h_val:.2f}</b> (" + " + ".join(h_parts) + ")"
             mr_parts = [f"자중모멘트 {t['sum_W_x_n']:.2f}"]
             if t['mr_sq_n'] > 0: mr_parts.append(f"상재모멘트 {t['mr_sq_n']:.2f}")
-            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
+            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(
+                mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
             mo_parts = [f"토압모멘트(無) {t['mh0_n']:.2f}"] if t['mh0_n'] > 0 else []
             if t['mw_n'] > 0: mo_parts.append(f"잔류수압모멘트 {t['mw_n']:.2f}")
             if t['tr_m'] > 0: mo_parts.append(f"견인력모멘트 {t['tr_m']:.2f}")
@@ -1938,14 +2211,16 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
         elif case_key == "1_4":
             v_parts = [f"자중 {t['sum_W_n']:.2f}"]
             if t['v_sq_n'] > 0: v_parts.append(f"상재연직 {t['v_sq_n']:.2f}")
-            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
+            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(
+                v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
             h_parts = [f"토압(상재有) {t['phq_n']:.2f}"] if t['phq_n'] > 0 else []
             if t['pw_n'] > 0: h_parts.append(f"잔류수압 {t['pw_n']:.2f}")
             if t['tr_f'] > 0: h_parts.append(f"견인력 {t['tr_f']:.2f}")
             h_str = f"<b>{h_val:.2f}</b> (" + " + ".join(h_parts) + ")"
             mr_parts = [f"자중모멘트 {t['sum_W_x_n']:.2f}"]
             if t['mr_sq_n'] > 0: mr_parts.append(f"상재모멘트 {t['mr_sq_n']:.2f}")
-            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
+            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(
+                mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
             mo_parts = [f"토압모멘트(有) {t['mhq_n']:.2f}"] if t['mhq_n'] > 0 else []
             if t['mw_n'] > 0: mo_parts.append(f"잔류수압모멘트 {t['mw_n']:.2f}")
             if t['tr_m'] > 0: mo_parts.append(f"견인력모멘트 {t['tr_m']:.2f}")
@@ -1979,7 +2254,8 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
         elif case_key == "2_3":
             v_parts = [f"자중 {t['sum_W_n']:.2f}"]
             if t.get('v_sq_s', 0.0) > 0: v_parts.append(f"상재연직 {t.get('v_sq_s', 0.0):.2f}")
-            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
+            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(
+                v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
             h_parts = [f"동토압(無) {t.get('ph0_s', 0.0):.2f}", f"관성력(제체) {t.get('eq_f', 0.0):.2f}"]
             if t.get('eq_f_sq', 0.0) > 0: h_parts.append(f"관성력(상재) {t.get('eq_f_sq', 0.0):.2f}")
             if t.get('pw_n', 0.0) > 0: h_parts.append(f"잔류수압 {t.get('pw_n', 0.0):.2f}")
@@ -1987,7 +2263,8 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
             h_str = f"<b>{h_val:.2f}</b> (" + " + ".join(h_parts) + ")"
             mr_parts = [f"자중모멘트 {t['sum_W_x_n']:.2f}"]
             if t.get('mr_sq_s', 0.0) > 0: mr_parts.append(f"상재모멘트 {t.get('mr_sq_s', 0.0):.2f}")
-            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
+            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(
+                mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
             mo_parts = [f"동토압모멘트(無) {t.get('mh0_s', 0.0):.2f}", f"관성모멘트(제체) {t.get('eq_m', 0.0):.2f}"]
             if t.get('eq_m_sq', 0.0) > 0: mo_parts.append(f"관성모멘트(상재) {t.get('eq_m_sq', 0.0):.2f}")
             if t.get('mw_n', 0.0) > 0: mo_parts.append(f"잔류수압모멘트 {t.get('mw_n', 0.0):.2f}")
@@ -1997,7 +2274,8 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
         elif case_key == "2_4":
             v_parts = [f"자중 {t['sum_W_n']:.2f}"]
             if t.get('v_sq_s', 0.0) > 0: v_parts.append(f"상재연직 {t.get('v_sq_s', 0.0):.2f}")
-            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
+            v_str = f"<b>{v_val:.2f}</b> (" + " + ".join(v_parts) + ")" if len(
+                v_parts) > 1 else f"<b>{v_val:.2f}</b> (자중)"
             h_parts = [f"동토압(有) {t.get('phq_s', 0.0):.2f}", f"관성력(제체) {t.get('eq_f', 0.0):.2f}"]
             if t.get('eq_f_sq', 0.0) > 0: h_parts.append(f"관성력(상재) {t.get('eq_f_sq', 0.0):.2f}")
             if t.get('pw_n', 0.0) > 0: h_parts.append(f"잔류수압 {t.get('pw_n', 0.0):.2f}")
@@ -2005,7 +2283,8 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
             h_str = f"<b>{h_val:.2f}</b> (" + " + ".join(h_parts) + ")"
             mr_parts = [f"자중모멘트 {t['sum_W_x_n']:.2f}"]
             if t.get('mr_sq_s', 0.0) > 0: mr_parts.append(f"상재모멘트 {t.get('mr_sq_s', 0.0):.2f}")
-            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
+            mr_str = f"<b>{mr_val:.2f}</b> (" + " + ".join(mr_parts) + ")" if len(
+                mr_parts) > 1 else f"<b>{mr_val:.2f}</b> (자중모멘트)"
             mo_parts = [f"동토압모멘트(有) {t.get('mhq_s', 0.0):.2f}", f"관성모멘트(제체) {t.get('eq_m', 0.0):.2f}"]
             if t.get('eq_m_sq', 0.0) > 0: mo_parts.append(f"관성모멘트(상재) {t.get('eq_m_sq', 0.0):.2f}")
             if t.get('mw_n', 0.0) > 0: mo_parts.append(f"잔류수압모멘트 {t.get('mw_n', 0.0):.2f}")
@@ -2023,6 +2302,70 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
         html += f"<td style='border:1px solid #ccc; text-align:left; padding-left:10px;'>{mo_str}</td></tr>"
 
     return html + "</table>"
+
+
+def generate_surcharge_html(tiers_df, q_val, c_top, tier_details=None):  # tier_details 인자를 받을 수 있게 열어두거나 외부 연동 확인
+    html = "<table style='width:100%; border-collapse: collapse; text-align:center; border: 2px solid #333; font-size:12px; margin-bottom: 25px;'>"
+    html += "<tr style='background-color:#d9d9d9;'>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>구 분</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>기준점</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>P(kN) 산식</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>연직력 P(kN)</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>모멘트 Mᵥ(kN·m) 산식</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>모멘트 Mᵥ(kN·m)</th>"
+    html += "<th style='border:1px solid #ccc; padding:8px;'>비고</th>"
+    html += "</tr>"
+
+    current_elev = c_top
+    for idx, row in tiers_df.iterrows():
+        h = float(row["높이 H(m)"])
+        b = float(row["폭 B(m)"])
+        bot_elev = current_elev - h
+        is_last = (idx == len(tiers_df) - 1)
+
+        if is_last:
+            eff_b = b - 1.0
+            p_val = q_val * eff_b
+            arm = 1.0 + (eff_b / 2.0)
+            arm_str = f"1.0 + {eff_b:.2f} / 2"
+        else:
+            eff_b = b
+            p_val = q_val * eff_b
+            arm = eff_b / 2.0
+            arm_str = f"{eff_b:.2f} / 2"
+
+        mv_val = p_val * arm
+
+        # ★ [핵심 수정] 계산된 상재하중 연직력과 모멘트를 해당 단면(tier_details)에 직접 저장!
+        if tier_details is not None and idx < len(tier_details):
+            tier_details[idx]['v_sq_n'] = p_val
+            tier_details[idx]['v_sq_s'] = p_val  # 지진시 등 필요에 따라 매핑
+            tier_details[idx]['mr_sq_n'] = mv_val
+            tier_details[idx]['mr_sq_s'] = mv_val
+
+        sign_str = "+" if bot_elev >= 0 else "-"
+        level_str = f"DL({sign_str}){abs(bot_elev):.2f}"
+
+        html += "<tr>"
+        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold;'>{level_str}</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px;'>항외측 TOE</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px;'>{q_val:.2f} × {eff_b:.2f}</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold;'>{p_val:.2f}</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px;'>{p_val:.2f} × ({arm_str})</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px; font-weight:bold; color:#1a73e8;'>{mv_val:.2f}</td>"
+        html += f"<td style='border:1px solid #ccc; padding:6px;'></td>"
+        html += "</tr>"
+
+        current_elev = bot_elev
+
+    html += "</table>"
+    return html
+
+
+# =====================================================================
+# ★ 검토단면에 DL 검토높이 표기가 추가된 CASE별 하중집계 테이블 생성 함수
+# =====================================================================
+
 
 def generate_sliding_table(cases_info, tiers_details, fs_allow=1.2, mu_cc=0.5, mu_cb=0.6):
     html = "<div style='margin-top: 15px;'><b>■ 활동 안정 검토</b></div>"
@@ -2061,6 +2404,7 @@ def generate_sliding_table(cases_info, tiers_details, fs_allow=1.2, mu_cc=0.5, m
             html += "<td style='border:1px dotted #ccc;'></td></tr>"
 
     return html + "</table>"
+
 
 def generate_overturning_table(cases_info, tiers_details, fs_allow=1.2):
     html = "<div style='margin-top: 15px;'><b>■ 전도 안정 검토</b></div>"
@@ -2292,9 +2636,15 @@ else:
 mu_cc = 0.5  # 콘크리트 상호간 마찰계수
 mu_cb = 0.6  # 콘크리트-사석 마찰계수
 
-min_sl = 999.0; min_sl_case = ""; min_sl_tier = ""
-min_ot = 999.0; min_ot_case = ""; min_ot_tier = ""
-max_q = 0.0; max_q_case = ""; max_q_tier = ""
+min_sl = 999.0;
+min_sl_case = "";
+min_sl_tier = ""
+min_ot = 999.0;
+min_ot_case = "";
+min_ot_tier = ""
+max_q = 0.0;
+max_q_case = "";
+max_q_tier = ""
 
 for c_label, c_key in cases_summary_list:
     formatted_case_name = f"CASE {c_key.replace('_', '-')}"
@@ -2594,7 +2944,9 @@ else:
     o_html(generate_water_pressure_html(edited_tiers, hwl_n, llw, rwl_n, c_top, g_w))
 
     o_title("5. 상재하중 (연직력 작용)", level=1)
-    o_html(generate_surcharge_html(edited_tiers, q_s, c_top))
+    o_html(generate_surcharge_html(edited_tiers, q_s, c_top, tier_details=tier_details))
+    # 혹은 본문 코드에서 쓰는 변수명이 tiers_details 라면:
+    # o_html(generate_surcharge_html(edited_tiers, q_s, c_top, tier_details=tiers_details))
 
     o_title("6. 지진시 동토압 상세", level=1)
 
