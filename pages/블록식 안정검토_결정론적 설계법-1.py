@@ -2122,35 +2122,46 @@ current_elev = c_top  # 최상단 기준 고도 (예: c_top)
 for idx, row in edited_tiers.iterrows():
     h = float(row["높이 H(m)"])
     b = float(row["폭 B(m)"])
+    out_h = float(row.get("전면돌출(m)", 0.0)) if pd.notna(row.get("전면돌출(m)")) else 0.0
     bot_elev = current_elev - h
     is_last = (idx == len(edited_tiers) - 1)
 
-    # 1. 상재하중 표와 '100% 동일한 공식'으로 연직력과 모멘트 계산
+    # 1. 상재하중 표와 '100% 동일한 공식'으로 유효폭 및 팔길이 연산
     if is_last:
-        eff_b = b - 1.0
-        p_val = q_s * eff_b
-        arm = 1.0 + (eff_b / 2.0)
+        eff_b = b - out_h
+        arm = out_h + (eff_b / 2.0)
     else:
         eff_b = b
-        p_val = q_s * eff_b
         arm = eff_b / 2.0
 
-    mv_val = p_val * arm
+    # ★ 평상시(q_n)와 지진시(q_s) 상재하중 분리 계산
+    p_val_n = q_n * eff_b
+    mv_val_n = p_val_n * arm
 
-    # 2. 딕셔너리에 상재하중 단독 값 저장 (상재하중 표가 읽어가는 값)
-    tier_details[idx]['v_sq_n'] = p_val
-    tier_details[idx]['v_sq_s'] = p_val
-    tier_details[idx]['mr_sq_n'] = mv_val
-    tier_details[idx]['mr_sq_s'] = mv_val
+    p_val_s = q_s * eff_b
+    mv_val_s = p_val_s * arm
+
+    # 2. 하중집계표 텍스트 출력용으로 딕셔너리에 각각 저장
+    tier_details[idx]['v_sq_n'] = p_val_n
+    tier_details[idx]['v_sq_s'] = p_val_s
+    tier_details[idx]['mr_sq_n'] = mv_val_n
+    tier_details[idx]['mr_sq_s'] = mv_val_s
 
     # 3. 기존 자중 값에 위에서 구한 정확한 상재하중 값을 더해서 최종 집계값(V, Mr) 업데이트
     w_n = tier_details[idx].get('sum_W_n', 0.0)
     wx_n = tier_details[idx].get('sum_W_x_n', 0.0)
 
-    tier_details[idx]['V_1_3'] = w_n + p_val
-    tier_details[idx]['V_1_4'] = w_n + p_val
-    tier_details[idx]['Mr_1_3'] = wx_n + mv_val
-    tier_details[idx]['Mr_1_4'] = wx_n + mv_val
+    # 평상시 (CASE 1-3, 1-4) -> q_n 적용
+    tier_details[idx]['V_1_3'] = w_n + p_val_n
+    tier_details[idx]['V_1_4'] = w_n + p_val_n
+    tier_details[idx]['Mr_1_3'] = wx_n + mv_val_n
+    tier_details[idx]['Mr_1_4'] = wx_n + mv_val_n
+
+    # 지진시 (CASE 2-3, 2-4) -> q_s 적용
+    tier_details[idx]['V_2_3'] = w_n + p_val_s
+    tier_details[idx]['V_2_4'] = w_n + p_val_s
+    tier_details[idx]['Mr_2_3'] = wx_n + mv_val_s
+    tier_details[idx]['Mr_2_4'] = wx_n + mv_val_s
 
     current_elev = bot_elev
 
@@ -2305,7 +2316,7 @@ def generate_case_summary_table(case_title, case_key, tiers_details):
     return html + "</table>"
 
 
-def generate_surcharge_html(tiers_df, q_val, c_top, tier_details=None):  # tier_details 인자를 받을 수 있게 열어두거나 외부 연동 확인
+def generate_surcharge_html(tiers_df, q_val, c_top, tier_details=None):
     html = "<table style='width:100%; border-collapse: collapse; text-align:center; border: 2px solid #333; font-size:12px; margin-bottom: 25px;'>"
     html += "<tr style='background-color:#d9d9d9;'>"
     html += "<th style='border:1px solid #ccc; padding:8px;'>구 분</th>"
@@ -2321,14 +2332,16 @@ def generate_surcharge_html(tiers_df, q_val, c_top, tier_details=None):  # tier_
     for idx, row in tiers_df.iterrows():
         h = float(row["높이 H(m)"])
         b = float(row["폭 B(m)"])
+        # 전면돌출 동적 반영
+        out_h = float(row.get("전면돌출(m)", 0.0)) if pd.notna(row.get("전면돌출(m)")) else 0.0
         bot_elev = current_elev - h
         is_last = (idx == len(tiers_df) - 1)
 
         if is_last:
-            eff_b = b - 1.0
+            eff_b = b - out_h
             p_val = q_val * eff_b
-            arm = 1.0 + (eff_b / 2.0)
-            arm_str = f"1.0 + {eff_b:.2f} / 2"
+            arm = out_h + (eff_b / 2.0)
+            arm_str = f"{out_h:.2f} + {eff_b:.2f} / 2"
         else:
             eff_b = b
             p_val = q_val * eff_b
@@ -2336,14 +2349,6 @@ def generate_surcharge_html(tiers_df, q_val, c_top, tier_details=None):  # tier_
             arm_str = f"{eff_b:.2f} / 2"
 
         mv_val = p_val * arm
-
-        # ★ [핵심 수정] 계산된 상재하중 연직력과 모멘트를 해당 단면(tier_details)에 직접 저장!
-        if tier_details is not None and idx < len(tier_details):
-            tier_details[idx]['v_sq_n'] = p_val
-            tier_details[idx]['v_sq_s'] = p_val  # 지진시 등 필요에 따라 매핑
-            tier_details[idx]['mr_sq_n'] = mv_val
-            tier_details[idx]['mr_sq_s'] = mv_val
-
         sign_str = "+" if bot_elev >= 0 else "-"
         level_str = f"DL({sign_str}){abs(bot_elev):.2f}"
 
